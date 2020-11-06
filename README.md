@@ -1,2 +1,4 @@
 # MorphBots-Grid-Final
-working iteration of MorphBot grid placement system
+Working iteration of MorphBot grid placement system
+
+Use WASD to rotate the camera, and LMB to place blocks.
