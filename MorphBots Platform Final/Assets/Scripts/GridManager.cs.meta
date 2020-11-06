@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b1d25e2dd2627274e918c8c2e129a17d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - dummyBotRef: {fileID: 5112809874525303460, guid: c3e1d745d1156f546abc6f131c99eb79,
+      type: 3}
+  - morphBotRef: {fileID: 1407047386182216019, guid: 245a39fdee53eff458a60e406c41e994,
+      type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
