@@ -37,6 +37,7 @@ public class GridManager : MonoBehaviour
     {
         // Spawn a reference of dummyBotRef at startingPosition with a rotation of (0, 0, 0) and assign the GameObject to dummyBot to be accessed in-game
         dummyBot = Instantiate(dummyBotRef, startingPosition, Quaternion.identity);
+        dummyBot.SetActive(false);
     }
 
     private void Update()
@@ -47,10 +48,16 @@ public class GridManager : MonoBehaviour
         // Checks if physicsRay collides with anything in the world with the blockLayer tag, and returns a boolean value
         if (Physics.Raycast(physicsRay, out physicsRayHit, rayMaxDistance, gameLayer))
         {
+            // Checks to see if dummyBot is not active
+            if (dummyBot.activeSelf == false)
+            {
+                // Activates dummyBot (making it visible)
+                dummyBot.SetActive(true);
+            }
+
             /* Subtracts physicsRayHit.point (the 3D coordinate of the mouse) by the position of the object that it hit (the morphBot with the blockLayer tag)
             and assigns it to blockDifference */
             blockDifference = physicsRayHit.point - physicsRayHit.transform.position;
-
 
         // Runs a series of floor functions to snap each axis of blockDifference to a grid of 1
 
@@ -89,11 +96,20 @@ public class GridManager : MonoBehaviour
             // Adds the truePosition, derived from the above statements, to the position of the block the ray collided with, and sets this value to the position of dummyBot
             dummyBot.transform.position = physicsRayHit.transform.position + truePosition;
 
-            // Checks to see if the left mouse button was pressed
-            if (Input.GetMouseButtonDown(0))
+            // Checks to see if the right mouse button was pressed
+            if (Input.GetMouseButtonDown(1))
             {
                 // Spawns a reference of morphBotRef at the current position of dummyBot with a rotation of (0, 0, 0)
                 Instantiate(morphBotRef, dummyBot.transform.position, Quaternion.identity);
+            }
+        }
+
+        // Runs statement if no collision was detected against objects with the gameLayer mask(s)
+        else
+        {
+            if (dummyBot.activeSelf == true)
+            {
+                dummyBot.SetActive(false);
             }
         }
     }
