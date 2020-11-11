@@ -257,7 +257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32407d1ab1e783048872988d28c45ee3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clampMin: -20
+  clampMin: -40
   clampMax: 20
   yPositive: 119
   yNegative: 115
@@ -293,13 +293,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1d25e2dd2627274e918c8c2e129a17d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dummyBotRef: {fileID: 5112809874525303460, guid: c3e1d745d1156f546abc6f131c99eb79,
+  dummyBotRef: {fileID: 8002098988365697494, guid: d50f5ad4893fa314f9c9bf62c1dd8e44,
     type: 3}
   morphBotRef: {fileID: 1407047386182216019, guid: 245a39fdee53eff458a60e406c41e994,
     type: 3}
   gameLayer:
     serializedVersion: 2
     m_Bits: 768
+  platformLayer:
+    serializedVersion: 2
+    m_Bits: 512
   startingPosition: {x: 0, y: 1, z: 0}
   rayMaxDistance: 50
 --- !u!4 &922884279
@@ -441,7 +444,7 @@ GameObject:
   - component: {fileID: 1485683709}
   - component: {fileID: 1485683708}
   - component: {fileID: 1485683707}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}

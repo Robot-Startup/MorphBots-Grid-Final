@@ -19,15 +19,18 @@ public class GridManager : MonoBehaviour
         Vector3 mousePosition;
         // The altered value of mousePosition after running through a series of statements
         Vector3 truePosition;
+        Ray physicsRay2;
+        RaycastHit physicsRayHit2;
 
     // Initialize variables whose values will be assigned in the editor
 
-        // Reference to the dummyBot prefab which will later be spawned in-game
-        public GameObject dummyBotRef;
+    // Reference to the dummyBot prefab which will later be spawned in-game
+    public GameObject dummyBotRef;
         // Reference to the morphBot prefab which will later be spawned in-game
         public GameObject morphBotRef;
         // The layer assigned to the platform and morphBot prefab
         public LayerMask gameLayer;
+        public LayerMask platformLayer;
         // Where the dummyBot will initially spawn when the game is started
         public Vector3 startingPosition;
         // How far the ray between the main camera and mouse cursor will be able to go
@@ -45,7 +48,7 @@ public class GridManager : MonoBehaviour
         // Creates a line, or ray from the main camera to where the mouse is pointing
         physicsRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        // Checks if physicsRay collides with anything in the world with the blockLayer tag, and returns a boolean value
+        // Checks if physicsRay collides with anything in the world with the blockLayer tag(s), and returns a boolean value
         if (Physics.Raycast(physicsRay, out physicsRayHit, rayMaxDistance, gameLayer))
         {
             // Checks to see if dummyBot is not active
@@ -94,13 +97,81 @@ public class GridManager : MonoBehaviour
             }
 
             // Adds the truePosition, derived from the above statements, to the position of the block the ray collided with, and sets this value to the position of dummyBot
-            dummyBot.transform.position = physicsRayHit.transform.position + truePosition;
+            /*dummyBot.transform.position = physicsRayHit.transform.position + truePosition;
+            dummyBot.transform.eulerAngles = truePosition;*/
+            if (physicsRayHit.transform.gameObject.layer == 8)
+            {
+                if (truePosition.x == 1)
+                {
+                    dummyBot.transform.position = (physicsRayHit.transform.position + truePosition) + new Vector3(-0.499f, 0, 0);
+                    dummyBot.transform.eulerAngles = new Vector3(0, 0, -90);
+                }
+                else if (truePosition.x == -1)
+                {
+                    dummyBot.transform.position = (physicsRayHit.transform.position + truePosition) + new Vector3(0.499f, 0, 0);
+                    dummyBot.transform.eulerAngles = new Vector3(0, 0, 90);
+                }
+                if (truePosition.y == 1)
+                {
+                    dummyBot.transform.position = (physicsRayHit.transform.position + truePosition) + new Vector3(0, -0.499f, 0);
+                    dummyBot.transform.eulerAngles = new Vector3(0, 0, 0);
+                }
+                else if (truePosition.y == -1)
+                {
+                    dummyBot.transform.position = (physicsRayHit.transform.position + truePosition) + new Vector3(0, 0.499f, 0);
+                    dummyBot.transform.eulerAngles = new Vector3(0, 0, 180);
+                }
+                if (truePosition.z == 1)
+                {
+                    dummyBot.transform.position = (physicsRayHit.transform.position + truePosition) + new Vector3(0, 0, -0.499f);
+                    dummyBot.transform.eulerAngles = new Vector3(90, 0, 0);
+                }
+                else if (truePosition.z == -1)
+                {
+                    dummyBot.transform.position = (physicsRayHit.transform.position + truePosition) + new Vector3(0, 0, 0.499f);
+                    dummyBot.transform.eulerAngles = new Vector3(-90, 0, 0);
+                }
+            }
+            else if (physicsRayHit.transform.gameObject.layer == 9)
+            {
+                if (Physics.Raycast(new Ray(truePosition, Vector3.down), out physicsRayHit2, 1, platformLayer))
+                {
+                    dummyBot.transform.position = truePosition - new Vector3(0, 0.499f, 0);
+                    dummyBot.transform.eulerAngles = new Vector3(0, 0, 0);
+                }
+                else if (Physics.Raycast(new Ray(truePosition, Vector3.up), out physicsRayHit2, 1, platformLayer))
+                {
+                    dummyBot.transform.position = truePosition + new Vector3(0, 0.499f, 0);
+                    dummyBot.transform.eulerAngles = new Vector3(0, 0, 180);
+                }
+                else if (Physics.Raycast(new Ray(truePosition, Vector3.right), out physicsRayHit2, 1, platformLayer))
+                {
+                    dummyBot.transform.position = truePosition + new Vector3(0.499f, 0, 0);
+                    dummyBot.transform.eulerAngles = new Vector3(0, 0, 90);
+                }
+                else if (Physics.Raycast(new Ray(truePosition, Vector3.left), out physicsRayHit2, 1, platformLayer))
+                {
+                    dummyBot.transform.position = truePosition - new Vector3(0.499f, 0, 0);
+                    dummyBot.transform.eulerAngles = new Vector3(0, 0, -90);
+                }
+                else if (Physics.Raycast(new Ray(truePosition, Vector3.forward), out physicsRayHit2, 1, platformLayer))
+                {
+                    dummyBot.transform.position = truePosition + new Vector3(0, 0, 0.499f);
+                    dummyBot.transform.eulerAngles = new Vector3(-90, 0, 0);
+                }
+                else if (Physics.Raycast(new Ray(truePosition, Vector3.back), out physicsRayHit2, 1, platformLayer))
+                {
+                    dummyBot.transform.position = truePosition - new Vector3(0, 0, 0.499f);
+                    dummyBot.transform.eulerAngles = new Vector3(90, 0, 0);
+                }
+            }
+            
 
             // Checks to see if the right mouse button was pressed
             if (Input.GetMouseButtonDown(1))
             {
                 // Spawns a reference of morphBotRef at the current position of dummyBot with a rotation of (0, 0, 0)
-                Instantiate(morphBotRef, dummyBot.transform.position, Quaternion.identity);
+                Instantiate(morphBotRef, physicsRayHit.transform.position + truePosition, Quaternion.identity);
             }
         }
 
