@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class ScriptManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    ModeManager modeManager;
 
-    // Update is called once per frame
-    void Update()
+    public void Start()
     {
-        
+        modeManager = GetComponent<ModeManager>();
+        modeManager.UpdateGameState();
     }
 }

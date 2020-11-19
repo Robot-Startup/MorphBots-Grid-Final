@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class MorphBotManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    MovementMode movementMode;
+    ModeManager modeManager;
+    private void Awake()
     {
-        
+        movementMode = FindObjectOfType<MovementMode>();
+        modeManager = FindObjectOfType<ModeManager>();
     }
-
-    // Update is called once per frame
-    void Update()
+    private void OnMouseDown()
     {
-        
+        if (modeManager.currentGameState == ModeManager.gameState.movement && movementMode.canMove == true)
+        {
+            movementMode.SelectMorphBot(this.gameObject);
+        }
     }
 }

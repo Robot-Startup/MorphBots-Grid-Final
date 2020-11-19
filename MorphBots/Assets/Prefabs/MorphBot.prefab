@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 880118388052047289}
   - component: {fileID: 9024480102046486831}
   - component: {fileID: 8645602125683009128}
+  - component: {fileID: 8862582744497735316}
   m_Layer: 8
   m_Name: MorphBot
   m_TagString: Untagged
@@ -93,3 +94,15 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8862582744497735316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5988921018320093333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d52b3d399c0c87343a9b29194d282592, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
