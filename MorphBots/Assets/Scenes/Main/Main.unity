@@ -696,6 +696,7 @@ GameObject:
   - component: {fileID: 2147225960}
   - component: {fileID: 2147225961}
   - component: {fileID: 2147225962}
+  - component: {fileID: 2147225963}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -814,11 +815,25 @@ MonoBehaviour:
   selectedMorphBot: {fileID: 0}
   selectedMaterial: {fileID: 2100000, guid: 0bf0bed0c251b1c4aa0a8ac0cccaf5f7, type: 2}
   defaultMaterial: {fileID: 2100000, guid: f8499a58305965949b571e7b3a4cf5d1, type: 2}
-  moveKey: 116
-  maxRaycastDistance: 25
-  gameLayers:
+  canMove: 1
+  initialTime: 0.1
+  transformKey: 116
+  objectLayers:
     serializedVersion: 2
     m_Bits: 768
+  maxRaycastDistance: 25
+--- !u!114 &2147225963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2147225955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f00f93733f1c9fe4bb5490d868952462, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &7670515757492678770
 PrefabInstance:
   m_ObjectHideFlags: 0

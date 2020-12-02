@@ -4,69 +4,69 @@ using UnityEngine;
 
 public class DestructionManager : MonoBehaviour
 {
-    // the maximum distance the proceeding raycasts will use
+    // The maximum distance the proceeding Raycasts will utilize
     public float maxRaycastDistance;
 
-    // the layers the proceeding raycasts will use (everything else they will ignore)
+    // A mixed LayerMask composing of the MorphBot layer and Platform layer
     public LayerMask gameLayers;
 
-    // determines if currentMorphBot can and should be destroyed
+    // Determines if currentMorphBot can and should be destroyed
     bool canDestroy;
 
-    // the current MorphBot that the script has detected
+    // The current MorphBot that the script has detected
     GameObject currentMorphBot;
 
-    // a ray from the main camera to where the mouse is
+    // A Ray from the main camera to where the mouse is
     Ray destructionRay;
-    // holds any information about the proceeding raycasts such as the object that was hit, location, etc.
+    // Stores information from a Raycast if collision against specified LayerMask is detected
     RaycastHit destructionRayHit;
 
-    // runs every frame
+    // Runs every frame
     private void Update()
     {
-        // creates a line from the main camera to the position of the mouse and assigns the value to destructionRay
+        // Creates a line from the main camera to the position of the mouse and assigns the value to destructionRay
         destructionRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        /* returns a boolean depending on whether destructionRay hit something with a gameLayers layer, returning hit information
-        to destructionRayHit */
+        /* Returns a boolean depending on whether destructionRay hit something with either layer from gameLayers, returning hit information
+        to destructionRayHit if true */
         if (Physics.Raycast(destructionRay, out destructionRayHit, maxRaycastDistance, gameLayers))
         {
-            // asks destructionRayHit if the object that was hit by destructionRay has a layer of 8 (which is the layer that MorphBots use)
+            // Asks destructionRayHit if the object that was hit by destructionRay has a layer of 8 (which is the layer that MorphBots use)
             if (destructionRayHit.transform.gameObject.layer == 8)
             {
-                // sets canDestroy to true (meaning that the hit MorphBot can be destroyed)
+                // Sets canDestroy to true (meaning that the hit MorphBot can be destroyed)
                 canDestroy = true;
-                // sets currentMorphBot to the object that destructionRayHit stored
+                // Sets currentMorphBot to the object that destructionRayHit stored
                 currentMorphBot = destructionRayHit.transform.gameObject;
             }
 
-            // runs if the layer in gameLayer was not 8 (a MorphBot)
+            // Runs if the layer in gameLayer was not 8 (a MorphBot)
             else
             {
-                // runs if canDestroy is true
+                // Runs if canDestroy is true
                 if (canDestroy == true)
                 {
-                    // sets canDestroy to false, telling the script that nothing can be destroyed
+                    // Sets canDestroy to false, telling the script that nothing can be destroyed
                     canDestroy = false;
                 }
             }
         }
 
-        // runs if no collision between destructionRay and objects with gameLayers was detected
+        // Runs if no collision between destructionRay and objects with gameLayers was detected
         else
         {
-            // runs if canDestroy is true
+            // Runs if canDestroy is true
             if (canDestroy == true)
             {
-                // sets canDestroy to false, telling the script that nothing can be destroyed
+                // Sets canDestroy to false, telling the script that nothing can be destroyed
                 canDestroy = false;
             }
         }
 
-        // runs if right mouse button is held down and canDestroy is true
+        // Runs if (a) right mouse button is held down and (b) canDestroy is true
         if (Input.GetMouseButtonDown(1) && canDestroy == true)
         {
-            // destroys the GameObject associated with currentMorphBot
+            // Destroys the GameObject associated with currentMorphBot
             Destroy(currentMorphBot);
         }
     }

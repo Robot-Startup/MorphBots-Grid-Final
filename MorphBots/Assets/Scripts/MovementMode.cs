@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class MovementMode : MonoBehaviour
 {
@@ -9,33 +10,46 @@ public class MovementMode : MonoBehaviour
     public GameObject selectedMorphBot;
     public Material selectedMaterial;
     public Material defaultMaterial;
-    public KeyCode moveKey;
-
-    Vector3 initialLocation;
-    Vector3 endingLocation;
-    Ray morphBotRay;
-    RaycastHit morphBotRayHit;
-    public float maxRaycastDistance;
-    public LayerMask gameLayers;
-    Vector3 mousePosition;
-    Vector3 truePosition;
-    Vector3 amountToMove;
-    const float lerpTimerInitial = 1;
-    float lerpTimerCurrent = lerpTimerInitial;
-    float lerpPercentage;
     public bool canMove = true;
 
-    private void Start()
+    float timePercent;
+    public float initialTime;
+    float currentTime;
+
+    public KeyCode transformKey;
+
+    Ray screenRay;
+    RaycastHit screenRayHit;
+    public LayerMask objectLayers;
+    public float maxRaycastDistance;
+
+    Vector3 initialLocation;
+    Vector3 destinationLocation;
+    Vector3 amountToMove;
+    Vector3 currentLocation;
+    int movesRemaining;
+    int movementOffset;
+
+    FunctionLibrary functionLibrary;
+
+
+    private void Awake()
     {
         highlightManager = GetComponent<HighlightManager>();
+        functionLibrary = GetComponent<FunctionLibrary>();
+        selectedMorphBot = null;
+        currentTime = initialTime;
     }
+
     public void SelectMorphBot(GameObject morphBotRef)
     {
         if (morphBotRef != selectedMorphBot)
-        {   if (selectedMorphBot != null)
+        {
+            if (selectedMorphBot != null)
             {
                 selectedMorphBot.GetComponent<MeshRenderer>().material = defaultMaterial;
             }
+
             selectedMorphBot = morphBotRef;
             selectedMorphBot.GetComponent<MeshRenderer>().material = selectedMaterial;
         }
@@ -47,93 +61,179 @@ public class MovementMode : MonoBehaviour
         }
     }
 
-    public void InitiateMovementProcess()
+    private void BeginMovement()
     {
         initialLocation = selectedMorphBot.transform.position;
-        GetTransformLocation();
-        endingLocation = morphBotRayHit.transform.position + truePosition;
-        amountToMove = endingLocation - initialLocation;
-        Timer();
-    }
+        destinationLocation = functionLibrary.GetGridPos(screenRayHit);
+        amountToMove = destinationLocation - initialLocation;
 
-    public void GetTransformLocation()
-    {
-            mousePosition = morphBotRayHit.point - morphBotRayHit.transform.position;
+        movesRemaining = Convert.ToInt32(amountToMove.x);
+        currentLocation = initialLocation;
 
-            if (mousePosition.x > 0)
-            {
-                truePosition.x = Mathf.Floor(mousePosition.x + 0.5f);
-            }
-
-            else if (mousePosition.x < 0)
-            {
-                truePosition.x = Mathf.Floor(mousePosition.x * -1 + 0.5f) * -1;
-            }
-
-            if (mousePosition.y > 0)
-            {
-                truePosition.y = Mathf.Floor(mousePosition.y + 0.5f);
-            }
-
-            else if (mousePosition.y < 0)
-            {
-                truePosition.y = Mathf.Floor(mousePosition.y * -1 + 0.5f) * -1;
-            }
-            if (mousePosition.z > 0)
-            {
-                truePosition.z = Mathf.Floor(mousePosition.z + 0.5f);
-            }
-
-            else if (mousePosition.z < 0)
-            {
-                truePosition.z = Mathf.Floor(mousePosition.z * -1 + 0.5f) * -1;
-            }
-    }
-
-    public void Timer()
-    {
-        lerpTimerCurrent -= Time.deltaTime;
-        lerpTimerCurrent = Mathf.Clamp(lerpTimerCurrent, 0, lerpTimerInitial);
-        lerpPercentage = Mathf.Clamp(((lerpTimerInitial - lerpTimerCurrent) / lerpTimerInitial), 0, lerpTimerInitial);
-        if (selectedMorphBot.transform.position != endingLocation)
+        if (movesRemaining > 0)
         {
-            Lerp();
-            Invoke("Timer", Time.deltaTime);
-            // note for tomorrow: make sure highlightblock is disabled when moving and also you cannot switch modes when moving.
+            movementOffset = 1;
         }
+
         else
         {
-            lerpTimerCurrent = lerpTimerInitial;
-            highlightManager.enabled = true;
-            canMove = true;
+            movementOffset = -1;
+        }
+
+        MoveInX();
+
+    }
+
+    private void ResetTimer()
+    {
+        currentTime = initialTime;
+    }
+
+    private bool UpdateTimer()
+    {
+        currentTime = Mathf.Clamp(currentTime - Time.deltaTime, 0, initialTime);
+
+        timePercent = 1 - (currentTime / initialTime);
+
+        if (currentTime > 0)
+        {
+            return true;
+        }
+
+        else
+        {
+            return false;
         }
     }
 
-    public void Update()
+    private void Update()
     {
-        if (Input.GetKeyDown(moveKey))
+        if (canMove)
         {
             if (selectedMorphBot != null)
             {
-                morphBotRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-                if (Physics.Raycast(morphBotRay, out morphBotRayHit, maxRaycastDistance, gameLayers))
+                if (Input.GetKeyDown(transformKey))
                 {
-                    if (canMove)
+                    screenRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                    if (Physics.Raycast(screenRay, out screenRayHit, maxRaycastDistance, objectLayers))
                     {
                         canMove = false;
-                        InitiateMovementProcess();
                         highlightManager.UpdateVisibility(false);
                         highlightManager.enabled = false;
+                        BeginMovement();
                     }
                 }
             }
         }
     }
 
-    public void Lerp()
+    private void MoveInX()
     {
-        selectedMorphBot.transform.position = Vector3.Lerp(initialLocation, endingLocation, lerpPercentage);
+        if (currentLocation.x != destinationLocation.x)
+        {
+            if (UpdateTimer())
+            {
+                currentLocation = selectedMorphBot.transform.position;
+                currentLocation.x = Mathf.Lerp(initialLocation.x, initialLocation.x + movementOffset, timePercent);
+                selectedMorphBot.transform.position = currentLocation;
+                Invoke("MoveInX", Time.deltaTime);
+            }
+
+            else
+            {
+                currentLocation.x = initialLocation.x + movementOffset;
+                selectedMorphBot.transform.position = currentLocation;
+                initialLocation.x += movementOffset;
+                ResetTimer();
+                Invoke("MoveInX", Time.deltaTime);
+            }
+        }
+
+        else
+        {
+            movesRemaining = Convert.ToInt32(amountToMove.y);
+
+            if (movesRemaining > 0)
+            {
+                movementOffset = 1;
+            }
+
+            else
+            {
+                movementOffset = -1;
+            }
+
+            MoveInY();
+        }
     }
 
+    private void MoveInY()
+    {
+        if (currentLocation.y != destinationLocation.y)
+        {
+            if (UpdateTimer())
+            {
+                currentLocation = selectedMorphBot.transform.position;
+                currentLocation.y = Mathf.Lerp(initialLocation.y, initialLocation.y + movementOffset, timePercent);
+                selectedMorphBot.transform.position = currentLocation;
+                Invoke("MoveInY", Time.deltaTime);
+            }
+
+            else
+            {
+                currentLocation.y = initialLocation.y + movementOffset;
+                selectedMorphBot.transform.position = currentLocation;
+                initialLocation.y += movementOffset;
+                ResetTimer();
+                Invoke("MoveInY", Time.deltaTime);
+            }
+        }
+
+        else
+        {
+            movesRemaining = Convert.ToInt32(amountToMove.z);
+
+            if (movesRemaining > 0)
+            {
+                movementOffset = 1;
+            }
+
+            else
+            {
+                movementOffset = -1;
+            }
+
+            MoveInZ();
+        }
+    }
+
+    private void MoveInZ()
+    {
+        if (currentLocation.z != destinationLocation.z)
+        {
+            if (UpdateTimer())
+            {
+                currentLocation = selectedMorphBot.transform.position;
+                currentLocation.z = Mathf.Lerp(initialLocation.z, initialLocation.z + movementOffset, timePercent);
+                selectedMorphBot.transform.position = currentLocation;
+                Invoke("MoveInZ", Time.deltaTime);
+            }
+
+            else
+            {
+                currentLocation.z = initialLocation.z + movementOffset;
+                selectedMorphBot.transform.position = currentLocation;
+                initialLocation.z += movementOffset;
+                ResetTimer();
+                Invoke("MoveInZ", Time.deltaTime);
+            }
+        }
+
+        else
+        {
+            canMove = true;
+            highlightManager.enabled = true;
+        }
+    }
 }
