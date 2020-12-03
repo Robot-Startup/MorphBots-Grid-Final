@@ -24,38 +24,41 @@ public class PlacementMode : MonoBehaviour
 
             if (Physics.Raycast(morphBotRay, out morphBotRayHit, maxRaycastDistance, gameLayers))
             {
-                mousePosition = morphBotRayHit.point - morphBotRayHit.transform.position;
-
-                if (mousePosition.x > 0)
+                if (morphBotRayHit.transform.gameObject.layer != 10) // outside layer
                 {
-                    truePosition.x = Mathf.Floor(mousePosition.x + 0.5f);
-                }
+                    mousePosition = morphBotRayHit.point - morphBotRayHit.transform.position;
 
-                else if (mousePosition.x < 0)
-                {
-                    truePosition.x = Mathf.Floor(mousePosition.x * -1 + 0.5f) * -1;
-                }
+                    if (mousePosition.x > 0)
+                    {
+                        truePosition.x = Mathf.Floor(mousePosition.x + 0.5f);
+                    }
 
-                if (mousePosition.y > 0)
-                {
-                    truePosition.y = Mathf.Floor(mousePosition.y + 0.5f);
-                }
+                    else if (mousePosition.x < 0)
+                    {
+                        truePosition.x = Mathf.Floor(mousePosition.x * -1 + 0.5f) * -1;
+                    }
 
-                else if (mousePosition.y < 0)
-                {
-                    truePosition.y = Mathf.Floor(mousePosition.y * -1 + 0.5f) * -1;
-                }
-                if (mousePosition.z > 0)
-                {
-                    truePosition.z = Mathf.Floor(mousePosition.z + 0.5f);
-                }
+                    if (mousePosition.y > 0)
+                    {
+                        truePosition.y = Mathf.Floor(mousePosition.y + 0.5f);
+                    }
 
-                else if (mousePosition.z < 0)
-                {
-                    truePosition.z = Mathf.Floor(mousePosition.z * -1 + 0.5f) * -1;
-                }
+                    else if (mousePosition.y < 0)
+                    {
+                        truePosition.y = Mathf.Floor(mousePosition.y * -1 + 0.5f) * -1;
+                    }
+                    if (mousePosition.z > 0)
+                    {
+                        truePosition.z = Mathf.Floor(mousePosition.z + 0.5f);
+                    }
 
-                Instantiate(morphBotRef, truePosition + morphBotRayHit.transform.position, Quaternion.identity);
+                    else if (mousePosition.z < 0)
+                    {
+                        truePosition.z = Mathf.Floor(mousePosition.z * -1 + 0.5f) * -1;
+                    }
+
+                    Instantiate(morphBotRef, truePosition + morphBotRayHit.transform.position, Quaternion.identity);
+                }
             }
         }
     }

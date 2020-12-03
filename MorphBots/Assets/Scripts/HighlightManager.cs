@@ -79,7 +79,7 @@ public class HighlightManager : MonoBehaviour
         // Returns truePosition
         return truePosition;
     }
-    
+
     // Runs at the beginning of the game
     private void Start()
     {
@@ -89,7 +89,7 @@ public class HighlightManager : MonoBehaviour
         // Deactivates highlighter by calling the UpdateVisibility function
         UpdateVisibility(false);
     }
-    
+
     // Runs every frame
     private void Update()
     {
@@ -204,11 +204,23 @@ public class HighlightManager : MonoBehaviour
                     highlighter.transform.eulerAngles = new Vector3(-90, 0, 0);
                 }
             }
+
+            // Runs if Outside layer was detected
+            else
+            {
+                // Runs if highlighter is active
+                if (highlighter.activeSelf != false)
+                {
+                    // Deactivates highlighter
+                    UpdateVisibility(false);
+                }
+            }
         }
-        
-        // Runs if the script did not detect any collision against a MorphBot or the platform.
+
+        // Runs if the script did not detect any collision for objects in gameLayers
         else
-        {   // Runs if highlighter is active
+        {   
+            // Runs if highlighter is active
             if (highlighter.activeSelf != false)
             {
                 // Deactivates highlighter

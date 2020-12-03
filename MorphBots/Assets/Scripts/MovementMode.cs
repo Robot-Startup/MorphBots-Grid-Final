@@ -20,7 +20,7 @@ public class MovementMode : MonoBehaviour
 
     Ray screenRay;
     RaycastHit screenRayHit;
-    public LayerMask objectLayers;
+    public LayerMask gameLayers;
     public float maxRaycastDistance;
 
     Vector3 initialLocation;
@@ -116,12 +116,15 @@ public class MovementMode : MonoBehaviour
                 {
                     screenRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-                    if (Physics.Raycast(screenRay, out screenRayHit, maxRaycastDistance, objectLayers))
+                    if (Physics.Raycast(screenRay, out screenRayHit, maxRaycastDistance, gameLayers))
                     {
-                        canMove = false;
-                        highlightManager.UpdateVisibility(false);
-                        highlightManager.enabled = false;
-                        BeginMovement();
+                        if (screenRayHit.transform.gameObject.layer != 10)
+                        {
+                            canMove = false;
+                            highlightManager.UpdateVisibility(false);
+                            highlightManager.enabled = false;
+                            BeginMovement();
+                        }
                     }
                 }
             }
